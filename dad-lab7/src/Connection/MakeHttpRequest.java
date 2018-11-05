@@ -13,6 +13,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 public class MakeHttpRequest {
@@ -29,14 +30,18 @@ public class MakeHttpRequest {
 				strUrl="https://opentdb.com/api_category.php";
 			else if(function=="getToken")
 				strUrl="https://opentdb.com/api_token.php?command=request";
+			else if(function=="resetToken")
+				strUrl="https://opentdb.com/api_token.php?command=reset";
 			else if(function=="getQuestions")
-				strUrl="https://opentdb.com/api.php?amount=";
+				strUrl="https://opentdb.com/api.php?null=";
 			else
 				JOptionPane.showMessageDialog(null, "Error with function");
 			HttpPost httpPost = new HttpPost(strUrl);
 			
-			if(params!=null)
+			if(params!=null) {
+				params.add(new BasicNameValuePair("encode","url3986"));
 				httpPost.setEntity(new UrlEncodedFormEntity(params));
+			}
 			HttpResponse httpResponse = httpClient.execute(httpPost);
 			HttpEntity httpEntity = httpResponse.getEntity();
 			is = httpEntity.getContent();

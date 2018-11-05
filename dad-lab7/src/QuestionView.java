@@ -5,7 +5,6 @@ import javax.swing.JFrame;
 import javax.swing.JRadioButton;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.swing.JLabel;
@@ -16,6 +15,7 @@ import javax.swing.JTextPane;
 import javax.swing.WindowConstants;
 import javax.swing.JPanel;
 import java.awt.event.ActionListener;
+import java.net.URLDecoder;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 
@@ -45,45 +45,40 @@ public class QuestionView {
 			return answer;
 		}
 	}
-	/**
-	 * Launch the application.
-	 */
-	/*public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					QuestionView window = new QuestionView(jsnObj);
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}*/
 
-	/**
-	 * Create the application.
-	 */
 	public QuestionView(JSONObject jsnObj) {
 		score=0;
 		try {
 			if(jsnObj.getInt("response_code")==0) {
 				JSONArray jsnArr = jsnObj.getJSONArray("results");
 				for(int i =0;i<jsnArr.length();i++) {
-					String category = jsnArr.getJSONObject(i).getString("category");
-					String question = jsnArr.getJSONObject(i).getString("question");
-					String answer = jsnArr.getJSONObject(i).getString("correct_answer");
-					JSONArray jsnIncorrectAnswers = jsnArr.getJSONObject(i).getJSONArray("incorrect_answers");
+					String category = URLDecoder
+							.decode(jsnArr.getJSONObject(i)
+							.getString("category"), "UTF-8");
+					String question = URLDecoder
+							.decode(jsnArr.getJSONObject(i)
+							.getString("question"), "UTF-8");
+					String answer = URLDecoder
+							.decode(jsnArr.getJSONObject(i)
+							.getString("correct_answer"),"UTF-8");
+					JSONArray jsnIncorrectAnswers = jsnArr
+							.getJSONObject(i)
+							.getJSONArray("incorrect_answers");
 					ArrayList<String> answers = new ArrayList<String>();
 					answers.add(answer);
 					for(int j = 0;j<jsnIncorrectAnswers.length();j++)
-						answers.add(jsnIncorrectAnswers.getString(j));
+						answers.add(URLDecoder.decode(jsnIncorrectAnswers.getString(j),"UTF-8"));
 					Collections.shuffle(answers);
 					questions.add(new Question(category, question, answer, answers));
 				}
 			}
-		} catch (JSONException e) {
+			else {
+				JOptionPane.showMessageDialog(frame, "No more unanswered questions for this options");
+				throw new Exception();
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
+			this.frame.dispose();
 		}
 		initialize();
 	}
@@ -92,9 +87,9 @@ public class QuestionView {
 	 * Initialize the contents of the frame.
 	 */
 	public void initialize() {
-		frame = new JFrame();
+		frame = new JFrame("Trivia Machine");
 		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		frame.setBounds(100, 100, 343, 318);
+		frame.setBounds(100, 100, 450, 318);
 		frame.getContentPane().setLayout(null);
 		frame.setVisible(true);
 		
@@ -107,7 +102,7 @@ public class QuestionView {
 		txtQuestionPane.setText(questions.get(currentQuestion).question);
 		txtQuestionPane.setForeground(Color.BLACK);
 		txtQuestionPane.setEditable(false);
-		txtQuestionPane.setBounds(10, 40, 307, 73);
+		txtQuestionPane.setBounds(10, 40, 400, 73);
 		frame.getContentPane().add(txtQuestionPane);
 		
 		JLabel lblScore = new JLabel("Score: "+score+"/"+questions.size());
@@ -123,12 +118,17 @@ public class QuestionView {
 		JButton btnNext = new JButton("Next");
 		btnNext.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-					if(answerGroup.getSelection().getActionCommand().equalsIgnoreCase(questions.get(currentQuestion).answer)) {
-							lblScore.setText(String.valueOf("Score: "+(++score)+"/"+questions.size()));
+					if(answerGroup
+							.getSelection()
+							.getActionCommand()
+							.equalsIgnoreCase(questions.get(currentQuestion).answer)) {
+							lblScore
+								.setText(String.valueOf("Score: "+(++score)+"/"+questions.size()));
 							JOptionPane.showMessageDialog(frame, "Correct!");
 					}
 					else
-						JOptionPane.showMessageDialog(frame, "Sorry, wrong answer :(");
+						JOptionPane
+							.showMessageDialog(frame, "Sorry, wrong answer :( \nThe correct answer was "+questions.get(currentQuestion).answer);
 					if(currentQuestion!=questions.size()-1) {
 						answerPanel.removeAll();
 						currentQuestion++;
@@ -154,7 +154,7 @@ public class QuestionView {
 			rdbtnAnswer = new JRadioButton(questions.get(currentQuestion).answers.get(i));
 			rdbtnAnswer.setActionCommand(questions.get(currentQuestion).answers.get(i));
 			answerGroup.add(rdbtnAnswer);
-			rdbtnAnswer.setBounds(6, 7+(26*i), 200, 23);
+			rdbtnAnswer.setBounds(6, 7+(26*i), 400, 23);
 			answerPanel.add(rdbtnAnswer);;
 		}
 	}

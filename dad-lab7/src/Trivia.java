@@ -224,7 +224,7 @@ public class Trivia {
 							params.add(new BasicNameValuePair("type","multiple"));
 						}
 						JSONObject questions = MakeHttpRequest.makeRequest(params, "getQuestions");
-						QuestionView questionWindow = new QuestionView(questions);
+						new QuestionView(questions);
 					}
 					//else
 						//throw new Exception();
@@ -251,6 +251,7 @@ public class Trivia {
 				resetToken();
 			}
 		});
+		btnResetToken.setToolTipText("Click this to reset question answered");
 		GridBagConstraints gbc_btnResetToken = new GridBagConstraints();
 		gbc_btnResetToken.insets = new Insets(0, 0, 5, 5);
 		gbc_btnResetToken.gridx = 4;
@@ -275,6 +276,8 @@ public class Trivia {
 	private void resetToken() {
 		Thread threadGetToken = new Thread() {
 			public void run() {
+				List<NameValuePair> params = new ArrayList<NameValuePair>();
+				params.add(new BasicNameValuePair("token", token));
 				MakeHttpRequest.makeRequest(null, "resetToken");
 				JOptionPane.showMessageDialog(frmTriviaMachine, "Token reset!");
 			}
