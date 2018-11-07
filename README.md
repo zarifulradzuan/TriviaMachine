@@ -18,6 +18,7 @@ This is a simple java game application that uses questions retrieved from https:
 		i.)	No parameters, it only return a list of categories.
 
 2)	Responses that the API return (the JSON values).
+	
 	a.	https://opentdb.com/api.php
 	
 		i.)	response_code
