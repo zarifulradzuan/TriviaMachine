@@ -1,8 +1,10 @@
 This is a simple java game application that uses questions retrieved from https://opentdb.com/.
 
 1)	Parameters that the API is able to receive. 
-  https://opentdb.com/api.php
-    i.)	amount: The number of questions wanted
+  
+	https://opentdb.com/api.php
+    
+		i.)	amount: The number of questions wanted
     ii.)	difficulty: Difficulty of questions returned
     iii.)	token: Token that can be used to track question answered so there would be no duplicate
     iv.)	type: Type of questions, whether true or false or multiple choice
